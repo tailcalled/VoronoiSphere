@@ -13,7 +13,7 @@ object VoronoiSphere {
     val rand = new Random(1248115)
     val nPts = 128
     var pts = Vector.fill(nPts)(V3(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian()).unit)
-    for (i <- 0 until 500) {
+    for (i <- 0 until 8) {
       val near = pts.map(p => p -> (pts.sortBy(-p * _).drop(1).view)).toMap
       def nearest(p: V3) = {
         pts.maxBy { v => p * v }
@@ -48,7 +48,7 @@ object VoronoiSphere {
         }
       }
       ImageIO.write(img, "png", new File(s"res$i.png"))
-      println(i)
+      println(s"$i")
       def corner(p1: V3, p2: V3, p3: V3) = {
         val a = (p2 - p1).unit
         val z = (a cp (p3 - p1)).unit
@@ -65,11 +65,6 @@ object VoronoiSphere {
         val c2 = q + qr * alpha
         val c = a * c2.x + b * c2.y
         c + p1
-      }
-      def touch(p1: V3, p2: V3, p3: V3) = {
-        val c = corner(p1, p2, p3)
-        val p = nearest(c)
-        p == p1 || p == p2 || p == p3
       }
       val tiles = pts.map(p => p -> {
         val n = near(p)(0)
